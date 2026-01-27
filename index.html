@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Romantic Voyage 2026 | Compact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --accent-color: #fbbf24;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition-speed: 0.8s; /* Faster transition for mobile */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Lato', sans-serif;
+            transition: background-color var(--transition-speed);
+            overflow-x: hidden;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        /* Ambient Background */
+        .ambient-glow {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 100vw; height: 100vh;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at center, var(--accent-color) 0%, transparent 70%);
+            opacity: 0.12;
+            z-index: -1;
+            transition: background var(--transition-speed);
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, .city-title { font-family: 'Cinzel', serif; }
+        .romantic-text { font-family: 'Playfair Display', serif; font-style: italic; }
+
+        /* Compact Navigation */
+        .nav-dock {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 600px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            z-index: 1000;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            scrollbar-width: none;
+        }
+        .nav-dock::-webkit-scrollbar { display: none; }
+
+        .nav-pill {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-pill.active {
+            background: var(--accent-color);
+            color: #0f172a;
+        }
+
+        /* Compact Header */
+        header {
+            padding: 30px 20px 10px; /* Much smaller padding */
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        header h1 {
+            font-size: 2.2rem; /* Smaller title */
+            line-height: 1.1;
+            margin: 5px 0;
+            background: linear-gradient(to right, #fff, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .city-indicator {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            z-index: 90;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+        .city-indicator span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            opacity: 0.3;
+            transition: all 0.5s ease;
+        }
+
+        /* Timeline Layout */
+        .timeline-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px 12px 80px;
+        }
+
+        .day-group {
+            margin-bottom: 40px; /* Less gap */
+            scroll-margin-top: 20px;
+        }
+
+        /* Date Header Strip */
+        .date-strip {
+            position: sticky;
+            top: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
+            z-index: 80;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-text {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .day-tag {
+            background: var(--glass-bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Compact Cards */
+        .event-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px; /* Tighter grouping */
+            position: relative;
+            display: grid;
+            grid-template-columns: 50px 1fr;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .event-card::before { display: none; } /* Remove side bar for cleaner mobile look */
+
+        .time {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .content {
+            border-left: 2px solid rgba(255,255,255,0.1);
+            padding-left: 12px;
+        }
+
+        .title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        /* Compact Map Button */
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            background: rgba(251, 191, 36, 0.15);
+            padding: 4px 10px;
+            border-radius: 15px;
+            text-decoration: none;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        .map-btn svg { width: 12px; height: 12px; margin-right: 4px; fill: var(--accent-color); }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow" id="glow"></div>
+
+    <div class="city-indicator">
+        <span id="cityText">LDN</span>
+    </div>
+
+    <header>
+        <div class="romantic-text" style="font-size: 1rem; color: var(--accent-color);">Romantic Voyage</div>
+        <h1>2026 TRIP</h1>
+        <p style="font-size: 0.8rem; opacity: 0.7;">LONDON • NICE • PARIS</p>
+    </header>
+
+    <div class="timeline-container" id="timeline"></div>
+    <div class="nav-dock" id="nav"></div>
+
+    <script>
+        // Data
+        const tripData = [
+            { day: "D1", fullDate: "2/13 (Fri)", city: "LONDON", theme: "london", events: [
+                { t: "19:40", title: "🛫 啟程 TPE - LHR", desc: "國泰航空，經香港轉機。" }
+            ]},
+            { day: "D2", fullDate: "2/14 (Sat)", city: "LONDON", theme: "london", events: [
+                { t: "08:00", title: "抵達 & 小威尼斯", desc: "入住飯店。情人節早餐。" },
+                { t: "10:00", title: "貝克街 & 萊斯特廣場", desc: "福爾摩斯博物館朝聖。" },
+                { t: "13:00", title: "西敏寺 & 大笨鐘", desc: "必拍：大笨鐘下情侶合照。" },
+                { t: "19:00", title: "🍽️ 南岸浪漫晚餐", desc: "Skylon 河景餐廳。" }
+            ]},
+            { day: "D3", fullDate: "2/15 (Sun)", city: "LONDON", theme: "london", events: [
+                { t: "09:30", title: "格林威治遊船", desc: "Westminster Pier 出發。" },
+                { t: "13:00", title: "波羅市場 & 倫敦塔", desc: "必吃起司三明治。" },
+                { t: "16:00", title: "倫敦塔橋", desc: "步行參觀外觀。" },
+                { t: "18:30", title: "Sky Garden", desc: "俯瞰倫敦夜景 (需預約)。" }
+            ]},
+            { day: "D4", fullDate: "2/16 (Mon)", city: "LONDON", theme: "london", events: [
+                { t: "09:00", title: "🏰 溫莎城堡", desc: "GWR 火車前往。" },
+                { t: "16:00", title: "攝政街", desc: "Liberty 百貨逛街。" }
+            ]},
+            { day: "D5", fullDate: "2/17 (Tue)", city: "LONDON", theme: "london", events: [
+                { t: "09:30", title: "🏛️ 巴斯一日遊", desc: "羅馬浴場、皇家新月樓。" },
+                { t: "12:30", title: "Sally Lunn's", desc: "圓麵包下午茶。" }
+            ]},
+            { day: "D6", fullDate: "2/18 (Wed)", city: "LONDON", theme: "london", events: [
+                { t: "10:30", title: "白金漢宮", desc: "衛兵交接儀式。" },
+                { t: "14:00", title: "大英博物館", desc: "羅塞塔石碑、木乃伊。" },
+                { t: "16:30", title: "聖保羅大教堂", desc: "登頂俯瞰市區。" },
+                { t: "18:30", title: "Harrods 百貨", desc: "地下食品廳。" }
+            ]},
+            { day: "D7", fullDate: "2/19 (Thu)", city: "NICE", theme: "nice", events: [
+                { t: "11:45", title: "🛫 飛往尼斯", desc: "抵達蔚藍海岸。" },
+                { t: "17:00", title: "賽雷亞花果市集", desc: "城堡山俯瞰天使灣。" }
+            ]},
+            { day: "D8", fullDate: "2/20 (Fri)", city: "MENTON", theme: "nice", events: [
+                { t: "09:30", title: "🍋 蒙頓檸檬節", desc: "TER 火車前往。" },
+                { t: "14:00", title: "摩納哥", desc: "親王宮與賭場。" }
+            ]},
+            { day: "D9", fullDate: "2/21 (Sat)", city: "NICE", theme: "nice", events: [
+                { t: "10:00", title: "瞳子哭哭長椅", desc: "昂格魯大道朝聖。" },
+                { t: "12:00", title: "🍽️ Nha Que", desc: "在地越式料理。" },
+                { t: "14:30", title: "🎭 嘉年華花車", desc: "馬賽納廣場。" },
+                { t: "20:30", title: "✨ 夜間燈光遊行", desc: "嘉年華高潮。" }
+            ]},
+            { day: "D10", fullDate: "2/22 (Sun)", city: "PARIS", theme: "nice", events: [
+                { t: "10:00", title: "☕ 瑪格之家", desc: "Place Magenta 喝咖啡。" },
+                { t: "14:58", title: "🚄 TGV 往巴黎", desc: "抵達里昂車站。" }
+            ]},
+            { day: "D11", fullDate: "2/23 (Mon)", city: "PARIS", theme: "paris", events: [
+                { t: "09:30", title: "聖母院 & 書店", desc: "左岸文藝氣息。" },
+                { t: "14:00", title: "先賢祠 & 盧森堡", desc: "公園放空。" },
+                { t: "17:00", title: "🗼 艾菲爾鐵塔", desc: "推薦黃昏搭遊船。" }
+            ]},
+            { day: "D12", fullDate: "2/24 (Tue)", city: "PARIS", theme: "paris", events: [
+                { t: "08:30", title: "👑 凡爾賽宮", desc: "鏡廳與花園。" },
+                { t: "19:00", title: "凱旋門夜景", desc: "晚餐吃牛排。" }
+            ]},
+            { day: "D13", fullDate: "2/25 (Wed)", city: "PARIS", theme: "paris", events: [
+                { t: "10:00", title: "香榭大道", desc: "Angelina 甜點。" },
+                { t: "14:00", title: "🎨 羅浮宮", desc: "蒙娜麗莎 (週三開)。" }
+            ]},
+            { day: "D14", fullDate: "2/26 (Thu)", city: "PARIS", theme: "paris", events: [
+                { t: "09:30", title: "蒙馬特", desc: "聖心堂、愛牆。" },
+                { t: "15:00", title: "奧賽美術館", desc: "印象派畫作。" }
+            ]},
+            { day: "D15", fullDate: "2/27 (Fri)", city: "PARIS", theme: "paris", events: [
+                { t: "10:00", title: "全面啟動橋", desc: "比爾阿克姆橋。" },
+                { t: "15:00", title: "拉法葉百貨", desc: "頂樓看鐵塔。" }
+            ]},
+            { day: "D16", fullDate: "2/28 (Sat)", city: "HOME", theme: "paris", events: [
+                { t: "09:00", title: "🛫 前往 CDG", desc: "辦退稅，返家。" }
+            ]}
+        ];
+
+        const themes = {
+            london: { bg: '#0f172a', accent: '#fbbf24' },
+            nice:   { bg: '#0891b2', accent: '#fde047' },
+            paris:  { bg: '#881337', accent: '#fbcfe8' }
+        };
+
+        const timelineEl = document.getElementById('timeline');
+        const navEl = document.getElementById('nav');
+        const cityTextEl = document.getElementById('cityText');
+        const glowEl = document.getElementById('glow');
+        const root = document.documentElement;
+
+        function init() {
+            tripData.forEach((dayData, index) => {
+                // Nav Pill
+                const pill = document.createElement('div');
+                pill.className = 'nav-pill';
+                pill.innerText = dayData.day;
+                pill.onclick = () => {
+                    document.getElementById(`day-${index}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+                navEl.appendChild(pill);
+
+                // Day Group
+                const section = document.createElement('div');
+                section.className = 'day-group';
+                section.id = `day-${index}`;
+                section.dataset.theme = dayData.theme;
+                section.dataset.city = dayData.city;
+
+                // Sticky Date Header
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'date-strip';
+                dateHeader.innerHTML = `
+                    <span class="date-text">${dayData.fullDate}</span>
+                    <span class="day-tag">${dayData.day}</span>
+                `;
+                section.appendChild(dateHeader);
+
+                // Events
+                dayData.events.forEach(evt => {
+                    const card = document.createElement('div');
+                    card.className = 'event-card';
+                    
+                    // Map Logic
+                    const cleanTitle = evt.title.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+                    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cleanTitle + " " + dayData.city)}`;
+
+                    card.innerHTML = `
+                        <div class="time">${evt.t}</div>
+                        <div class="content">
+                            <div class="title">${evt.title}</div>
+                            <div class="desc">${evt.desc}</div>
+                            <a href="${mapUrl}" target="_blank" class="map-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                導航
+                            </a>
+                        </div>
+                    `;
+                    section.appendChild(card);
+                });
+
+                timelineEl.appendChild(section);
+            });
+
+            observeScroll();
+        }
+
+        function observeScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const themeName = entry.target.dataset.theme;
+                        const cityName = entry.target.dataset.city;
+                        updateTheme(themeName, cityName);
+                        
+                        const idx = parseInt(entry.target.id.split('-')[1]);
+                        document.querySelectorAll('.nav-pill').forEach((d, i) => {
+                            if (i === idx) {
+                                d.classList.add('active');
+                                d.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            } else {
+                                d.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "-10% 0px -60% 0px" });
+
+            document.querySelectorAll('.day-group').forEach(el => observer.observe(el));
+        }
+
+        function updateTheme(themeName, cityName) {
+            const theme = themes[themeName];
+            if (!theme) return;
+            root.style.setProperty('--bg-color', theme.bg);
+            root.style.setProperty('--accent-color', theme.accent);
+            glowEl.style.background = `radial-gradient(circle at center, ${theme.accent} 0%, transparent 70%)`;
+            
+            // Abbreviate city names for compact header
+            const cityAbbr = cityName === "LONDON" ? "LDN" : (cityName === "PARIS" ? "PAR" : cityName);
+
+            if (cityTextEl.innerText !== cityAbbr) {
+                cityTextEl.style.opacity = 0;
+                setTimeout(() => {
+                    cityTextEl.innerText = cityAbbr;
+                    cityTextEl.style.color = theme.accent;
+                    cityTextEl.style.opacity = 0.3;
+                }, 400);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
