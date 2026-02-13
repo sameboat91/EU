@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>英國法國浪漫之旅 | 16 Days of Romance</title>
+    <!-- 引入字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a2a3a;
+            --accent: #c5a059;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-light: #666;
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+            --nav-height: 56px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden; /* 禁止全域捲動，交給容器處理 */
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Loading Animation */
+        #loader {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Cormorant Garamond'; font-size: 2rem; color: var(--accent);
+            animation: fadeOut 0.5s ease forwards 1.5s; pointer-events: none;
+        }
+
+        /* 1. Navigation Bar (Fixed Top) */
+        #day-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0 10px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+            scrollbar-width: none;
+        }
+        #day-nav::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            display: inline-block;
+            padding: 6px 14px;
+            margin-right: 8px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            background: #f4f4f4;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cormorant Garamond';
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(26, 42, 58, 0.3);
+        }
+
+        /* 2. Main Horizontal Scroll Container */
+        #swipe-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        #swipe-container::-webkit-scrollbar { display: none; }
+
+        /* 3. Individual Slide (Page) */
+        .slide {
+            flex: 0 0 100vw; /* 佔滿全寬 */
+            height: 100vh;
+            scroll-snap-align: start;
+            overflow-y: auto; /* 頁面內部允許垂直捲動 */
+            padding-top: var(--nav-height); /* 避開導航 */
+            padding-bottom: 40px;
+            position: relative;
+            background: var(--bg-color);
+        }
+
+        /* Cover Slide Styling */
+        .cover-slide {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .cover-title { font-family: 'Cormorant Garamond'; font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); line-height: 1; }
+        .cover-subtitle { font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; opacity: 0.9; }
+        .swipe-hint {
+            position: absolute; bottom: 50px; left: 0; right: 0;
+            text-align: center; font-size: 0.9rem; opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        /* Day Content Layout */
+        .day-content {
+            padding: 20px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .day-header-large {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .day-number {
+            font-family: 'Cormorant Garamond';
+            font-size: 3.5rem;
+            color: rgba(26, 42, 58, 0.1);
+            line-height: 1;
+            font-weight: 700;
+        }
+        .day-date-large {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: -20px;
+            background: rgba(255,255,255,0.8);
+            display: inline-block;
+            padding: 0 10px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Timeline in Slide */
+        .slide-timeline {
+            position: relative;
+            border-left: 2px solid #e0e0e0;
+            margin-left: 15px;
+            padding-left: 25px;
+            padding-bottom: 20px;
+        }
+
+        /* Event Card */
+        .event-card {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .event-card:active { transform: scale(0.98); }
+
+        /* Dot on the timeline */
+        .timeline-dot {
+            position: absolute;
+            left: -32px; /* Adjust based on padding */
+            top: 20px;
+            width: 12px; height: 12px;
+            background: white;
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+        }
+
+        .time { color: var(--accent); font-weight: 700; font-size: 0.85rem; margin-bottom: 5px; display: block;}
+        .title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); padding-right: 40px; }
+        
+        .tag-container { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+        .tag { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #eee; color: #555; }
+        .tag.transport { background: #e3f2fd; color: #0d47a1; }
+        .tag.food { background: #fff3e0; color: #e65100; }
+        .tag.sight { background: #e8f5e9; color: #1b5e20; }
+        .tag.hotel { background: #f3e5f5; color: #7b1fa2; }
+        
+        .desc { font-size: 0.9rem; color: #555; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .full-desc { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; font-size: 0.9rem; color: #444; white-space: pre-line; }
+        .event-card.expanded .desc { display: none; }
+        .event-card.expanded .full-desc { display: block; animation: slideDown 0.3s ease; }
+        .click-hint { font-size: 0.7rem; color: #bbb; text-align: right; margin-top: 8px; }
+
+        .detail-section { margin-bottom: 10px; }
+        .detail-title { font-weight: 700; color: var(--accent); display: block; margin-bottom: 4px; font-size: 0.85rem; letter-spacing: 0.5px;}
+        .detail-content { line-height: 1.6; color: #555; }
+        
+        .map-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #fff;
+            border: 1px solid #eee;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            color: #ea4335;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        .map-btn:active { background: #f9f9f9; transform: scale(0.9); }
+
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader">Packing... ✈️</div>
+
+    <!-- Sticky Navigation -->
+    <nav id="day-nav">
+        <div class="nav-item active" onclick="scrollToSlide(0)">Cover</div>
+    </nav>
+
+    <!-- Main Swipe Container -->
+    <div id="swipe-container">
+        <!-- Slide 0: Cover -->
+        <div class="slide cover-slide" id="slide-0">
+            <h1 class="cover-title">UK & France<br>Romance</h1>
+            <div class="cover-subtitle">16 Days of Memories</div>
+            <div class="swipe-hint">← 向左滑動開始旅程</div>
+        </div>
+    </div>
+
+    <script>
+        const itineraryData = [
+            { day: "Day 1", date: "2/13 (五)", events: [
+                { 
+                    time: "16:00", title: "前往桃園機場 T1", type: "transport", 
+                    desc: "確認行李清單，準備出發！", intro: "旅程的起點。建議起飛前 3 小時抵達機場櫃檯辦理手續。", 
+                    highlights: "1. 檢查護照有效期。\n2. 確認網卡/漫遊已開通。\n3. 下載好航空公司 App 方便查看登機門。" 
+                },
+                { 
+                    time: "19:40", title: "🛫 啟程 TPE - HKG - LHR", type: "transport", 
+                    desc: "國泰航空 CX401 -> CX255。", intro: "長途飛行即將開始。在香港轉機時間若充裕，可逛逛機場免稅店。", 
+                    highlights: "1. 機上保濕：帶空瓶過安檢後裝水。\n2. 調整時差：上飛機後嘗試將手錶調成倫敦時間。\n3. 舒適穿著：建議穿寬鬆衣物與好穿脫的鞋子。" 
+                }
+            ]},
+            { day: "Day 2", date: "2/14 (六)", events: [
+                { 
+                    time: "05:25", title: "抵達倫敦 LHR", type: "transport", 
+                    desc: "搭乘 Elizabeth Line 前往 Paddington。", intro: "抵達希斯洛機場 (Heathrow)，通關後跟隨 'Trains' 指標。", 
+                    highlights: "1. 體驗最新這條 Elizabeth Line (伊莉莎白線)，乾淨且有冷氣。\n2. 沿途觀察倫敦郊區到市中心的景色變化。" 
+                },
+                { 
+                    time: "08:00", title: "小威尼斯 & 早餐", type: "food", 
+                    desc: "The Cheese Barge 或 Beany Green 早午餐。", intro: "Little Venice 是攝政運河與大聯盟運河的交匯處，充滿悠閒的水上風情。", 
+                    highlights: "1. 色彩繽紛的窄船 (Narrowboats) 停泊在河岸。\n2. 找一家河畔咖啡廳享受第一頓英式早餐。\n3. 沿著運河步道散步，感受倫敦寧靜的一面。" 
+                },
+                { 
+                    time: "09:00", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", note: "寄放行李", 
+                    intro: "先將大件行李安置好，開始輕裝探索倫敦。", 
+                    highlights: "1. 先確認住宿地點的行李寄放區。\n2. 整理好隨身包包，帶上地圖與相機。" 
+                },
+                { 
+                    time: "09:30", title: "西敏寺區散步 & Regency Cafe", type: "sight", 
+                    desc: "西敏寺 -> 大笨鐘 -> Regency Cafe。", intro: "倫敦政治與皇室權力的中心。中途安排去吃經典的英式早餐名店。", 
+                    highlights: "1. **Regency Cafe**：充滿復古電影感的傳統早餐店，必點 Full English Breakfast。\n2. **西敏寺**：歷代國王加冕處，哥德式建築的極致。\n3. **大笨鐘**：剛整修完畢，金光閃閃，在西敏橋上拍照最美。" 
+                },
+                { 
+                    time: "13:00", title: "倫敦眼 London Eye", type: "sight", 
+                    desc: "已預約 13:00。俯瞰泰晤士河。", intro: "歐洲最高的摩天輪，原本是為了慶祝千禧年而建，現在是倫敦最受歡迎的付費景點。", 
+                    highlights: "1. **提早報到**：建議 12:40 抵達進行安檢。\n2. **最佳位置**：進入膠囊後，遠離門口的對角線位置視野最好。\n3. **拍照角度**：俯瞰國會大廈與大笨鐘的絕佳角度。" 
+                },
+                { 
+                    time: "14:00", title: "聖保羅大教堂", type: "sight", 
+                    desc: "參觀聖保羅大教堂。", intro: "St Paul's Cathedral 是巴洛克風格的巨作，擁有世界第二大的圓頂。", 
+                    highlights: "1. **迴音廊 (Whispering Gallery)**：體驗神奇的聲學效果。\n2. **登頂金迴廊**：雖然樓梯陡峭，但能俯瞰倫敦絕美全景。\n3. 地下室有名人墓穴，包括威 Wellington 公爵。" 
+                },
+                { 
+                    time: "17:00", title: "碎片塔 The Shard", type: "sight", 
+                    desc: "看日落與夜景。", intro: "倫敦最高的建築，宛如碎玻璃般插入天際，是俯瞰倫敦全景的最佳地點。", 
+                    highlights: "1. **72樓露天觀景台**：感受高空微風，360度無死角美景。\n2. **日落轉夜景**：建議日落前半小時抵達，一次收集白天、夕陽與燈火通明的倫敦。\n3. **香檳吧**：點一杯香檳，敬這趟浪漫旅程。" 
+                },
+                { 
+                    time: "21:00", title: "Burger & Lobster", type: "food", 
+                    desc: "Bread Street 分店 🌹", intro: "倫敦必吃網紅餐廳，以新鮮龍蝦與多汁漢堡聞名。", 
+                    highlights: "1. **Combo 組合**：如果猶豫不決，直接點半隻龍蝦+漢堡的組合。\n2. **檸檬蒜味奶油醬**：靈魂醬汁，沾薯條或龍蝦都絕配。\n3. 記得穿上店家提供的圍兜兜拍照！" 
+                },
+                { 
+                    time: "23:00", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", intro: "回到溫暖的公寓休息。", 
+                    highlights: "1. 抬腿放鬆，消除走路一整天的疲勞。\n2. 整理明天的交通路線。" 
+                }
+            ]},
+            { day: "Day 3", date: "2/15 (日)", events: [
+                { 
+                    time: "09:00", title: "泰晤士河遊船", type: "sight", 
+                    desc: "City Cruises 看塔橋。", intro: "從水上視角欣賞倫敦，避開路面擁擠，享受泰晤士河風光。", 
+                    highlights: "1. 船經塔橋 (Tower Bridge) 下方時最為壯觀。\n2. 聽船上導遊講解兩岸建築的歷史趣聞。\n3. 戶外甲板風大，記得戴帽子或圍巾。" 
+                },
+                { 
+                    time: "10:00", title: "倫敦塔橋", type: "sight", 
+                    desc: "參觀 London Tower。", intro: "這不是一座普通的橋，而是倫敦的象徵。旁邊的倫敦塔曾是皇宮、監獄與動物園。", 
+                    highlights: "1. **倫敦塔**：必看帝國皇冠 (Imperial State Crown) 與巨大的鑽石。\n2. **御用侍從衛士 (Beefeaters)**：穿著傳統制服的導覽員。\n3. **塔橋玻璃走道**：挑戰膽量，直接看到腳下的車流與河水。" 
+                },
+                { 
+                    time: "13:30", title: "波羅市場", type: "food", 
+                    desc: "Borough Market 美食。", intro: "倫敦最古老、規模最大的食品市場，匯集了全英國最棒的食材。", 
+                    highlights: "1. **Richard Haward's Oysters**：現開生蠔，新鮮便宜。\n2. **The Black Pig**：被譽為倫敦最好吃的豬肉三明治。\n3. **Humble Crumble**：網紅熱甜點，自選配料的奶酥蘋果派。" 
+                },
+                { 
+                    time: "14:30", title: "格林威治天文台", type: "sight", 
+                    desc: "跨越本初子午線。", intro: "時間的起源地。這裡是劃分地球東西半球的地方。", 
+                    highlights: "1. **本初子午線 (Prime Meridian)**：雙腳橫跨東西半球拍照。\n2. **格林威治公園**：從山丘上眺望金絲雀碼頭 (Canary Wharf) 的金融區天際線。\n3. 參觀海事博物館附近的「卡蒂薩克號」帆船。" 
+                },
+                { 
+                    time: "17:00", title: "Jack the Ripper Tour", type: "sight", 
+                    desc: "開膛手傑克導覽。", intro: "探索 1888 年倫敦最著名的懸案。導遊將帶領大家走過當年的案發巷弄。", 
+                    highlights: "1. 體驗維多利亞時代倫敦東區 (East End) 的陰暗氛圍。\n2. 使用投影機在牆上展示當年的報紙與照片。\n3. 聽導遊分析各個嫌疑人的可能性，像偵探一樣思考。" 
+                },
+                { 
+                    time: "19:30", title: "Dishoom", type: "food", 
+                    desc: "吃印度菜。", intro: "全倫敦最受歡迎的孟買風格餐廳，裝潢復古，食物極具水準。", 
+                    highlights: "1. **House Black Daal**：招牌黑扁豆咖哩，燉煮 24 小時，濃郁奶香。\n2. **Bacon Naan Roll**：雖然是早餐名物，但晚餐的烤餅也一樣出色。\n3. **Chai**：無限續杯的香料奶茶，暖心又暖胃。" 
+                },
+                { 
+                    time: "21:30", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", intro: "結束充實的倫敦一日遊。", 
+                    highlights: "1. 確認明天前往溫莎的車次。" 
+                }
+            ]},
+            { day: "Day 4", date: "2/16 (一)", events: [
+                { 
+                    time: "08:30", title: "溫莎城堡", type: "sight", 
+                    desc: "Windsor Castle 參觀。", intro: "世界上現存最古老、且至今仍有人居住的城堡。是已故女王伊莉莎白二世生前最愛的地方。", 
+                    highlights: "1. **聖喬治禮拜堂**：亨利八世與伊莉莎白二世的長眠之地。\n2. **瑪麗王后玩偶屋**：微縮藝術的極致，甚至有可運作的迷你水電系統。\n3. **衛兵交接**：比白金漢宮距離更近，更能看清細節。" 
+                },
+                { 
+                    time: "15:00", title: "貝克街 & Arôme Bakery", type: "food", 
+                    desc: "福爾摩斯巡禮與吐司。", intro: "Baker Street 是偵探迷的聖地，附近的 Duke Street 則有倫敦當紅的麵包店。", 
+                    highlights: "1. **福爾摩斯博物館**：門口有蘇格蘭場警衛，221B 門牌必拍。\n2. **Arôme Bakery**：必買 Honey Butter Toast (蜂蜜奶油吐司)，外脆內軟。\n3. 漫步在高級住宅區的優雅氣息。" 
+                },
+                { 
+                    time: "16:00", title: "攝政街 Regent Street", type: "sight", 
+                    desc: "優雅弧形購物街。", intro: "連接牛津圓環與皮卡迪利圓環的購物大道，以弧形建築曲線聞名。", 
+                    highlights: "1. **建築美學**：欣賞著名的弧形街道設計 (The Curve)。\n2. **Hamleys**：世界最大的玩具店，即使大人逛也會童心大發。\n3. 這裡是買英倫品牌的絕佳地點。" 
+                },
+                { 
+                    time: "19:15", title: "Flat Iron", type: "food", 
+                    desc: "高CP值牛排。", intro: "以高性價比著稱的牛排店，菜單簡單，專注於提供好的肉質。", 
+                    highlights: "1. **招牌 Flat Iron Steak**：建議點 Medium-Rare (三分熟)。\n2. **免費冰淇淋**：餐後領取小菜刀代幣兌換海鹽焦糖冰淇淋。\n3. 必點奶油菠菜配菜。" 
+                },
+                { 
+                    time: "21:00", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", intro: "慢慢散步或搭車回住宿。", 
+                    highlights: "1. 享受倫敦夜晚涼爽的空氣。" 
+                }
+            ]},
+            { day: "Day 5", date: "2/17 (二)", events: [
+                { 
+                    time: "09:30", title: "前往巴斯 Bath", type: "transport", 
+                    desc: "搭火車前往巴斯。", intro: "全城都是世界文化遺產，保留了喬治亞時期建築與羅馬遺跡。", 
+                    highlights: "1. 坐在火車上欣賞英格蘭鄉村的綠意風光。" 
+                },
+                { 
+                    time: "11:00", title: "羅馬浴場", type: "sight", 
+                    desc: "Roman Baths。", intro: "西元一世紀羅馬人建立的社交與洗浴中心，至今仍有天然溫泉湧出。", 
+                    highlights: "1. **大浴池**：綠色的露天溫泉池，四周環繞維多利亞時代雕像。\n2. **金頭像**：女神 Sulis Minerva 的鍍金頭像。\n3. 試喝一小杯含有豐富礦物質的溫泉水。" 
+                },
+                { 
+                    time: "12:30", title: "Sally Lunn's", type: "food", 
+                    desc: "吃圓麵包 (Bun)。", intro: "巴斯現存最古老的房子 (1482年)，也是著名的巴斯圓麵包發源地。", 
+                    highlights: "1. **Sally Lunn Bun**：口感鬆軟巨大的圓麵包，甜鹹皆宜。\n2. 參觀地下室的小型博物館。" 
+                },
+                { 
+                    time: "13:45", title: "巴斯修道院", type: "sight", 
+                    desc: "參觀 Bath Abbey。", intro: "巴斯的信仰中心，以其精美的垂直哥德式建築與扇形拱頂聞名。", 
+                    highlights: "1. **扇形拱頂**：抬頭欣賞精緻的石刻天花板。\n2. **雅各的天梯**：外牆上刻有天使攀爬梯子的獨特景象。" 
+                },
+                { 
+                    time: "15:00", title: "建築大賞：散步路線", type: "sight", 
+                    desc: "普爾特尼橋 -> 圓形廣場 -> 皇家新月樓。", intro: "巴斯經典散步路線，一次收集所有喬治亞建築藝術。", 
+                    highlights: "1. **普爾特尼橋**：橋上兩側都是商店，像佛羅倫斯老橋。\n2. **圓形廣場**：靈感來自羅馬競技場，巨大的圓弧形建築群。\n3. **皇家新月樓**：在草坪中央拍出壯觀的全景照片。" 
+                },
+                { 
+                    time: "16:30", title: "Milsom Street", type: "sight", 
+                    desc: "時尚購物街。", intro: "曾獲選為英國最時尚的街道，充滿精緻的獨立小店與品牌。", 
+                    highlights: "1. 感受珍·奧斯汀筆下的社交氛圍。\n2. 購買巴斯在地的文創小物。" 
+                },
+                { 
+                    time: "18:13", title: "返回倫敦", type: "transport", 
+                    desc: "搭車回 Paddington。", intro: "結束古城之旅，返回大都市。", 
+                    highlights: "1. 在火車上整理今天拍的照片。" 
+                },
+                { 
+                    time: "19:40", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", intro: "回到溫暖房間休息。", 
+                    highlights: "1. 超市買點好喝的蘋果酒。" 
+                }
+            ]},
+            { day: "Day 6", date: "2/18 (三)", events: [
+                { 
+                    time: "09:30", title: "白金漢宮", type: "sight", 
+                    desc: "衛兵交接表演。", intro: "英國君主的寢宮。衛兵交接是倫敦最熱門的免費表演。", 
+                    highlights: "1. 提早到維多利亞女王紀念碑佔位。\n2. 欣賞管弦樂隊演奏流行音樂的趣味。" 
+                },
+                { 
+                    time: "13:30", title: "大英博物館", type: "sight", 
+                    desc: "世界級收藏。", intro: "世界三大博物館之一，收藏了人類文明200萬年的歷史。", 
+                    highlights: "1. **羅塞塔石碑**：解開古埃及文字之謎。\n2. **埃及館**：壯觀的木乃伊與雕塑。" 
+                },
+                { 
+                    time: "18:30", title: "哈洛德百貨", type: "sight", 
+                    desc: "Harrods 參觀。", intro: "倫敦最奢華的百貨公司，建築本身就是古蹟。", 
+                    highlights: "1. **食品廳**：像珠寶店一樣展示美食。\n2. **埃及電扶梯**：充滿法老風情的浮誇設計。" 
+                },
+                { 
+                    time: "20:00", title: "Burger & Lobster", type: "food", 
+                    desc: "再來一次龍蝦！", intro: "Knightsbridge 分店。逛完哈洛德直接吃美食。", 
+                    highlights: "1. 嘗試 Lobster Roll，滿滿的肉質感。" 
+                },
+                { 
+                    time: "22:00", title: "London Paddington Apartments", type: "hotel", 
+                    desc: "8-9 Sale Pl, London W2 1PH", intro: "倫敦最後一晚。", 
+                    highlights: "1. 打包戰利品，準備明天出發南法。" 
+                }
+            ]},
+            { day: "Day 7", date: "2/19 (四)", events: [
+                { 
+                    time: "08:30", title: "希斯洛機場 T5", type: "transport", 
+                    desc: "前往機場。", intro: "前往英航主場 T5 航廈。", 
+                    highlights: "1. 逛逛機場的哈利波特店。" 
+                },
+                { 
+                    time: "11:45", title: "🛫 飛往尼斯 Nice", type: "transport", 
+                    desc: "南法之旅開始。", intro: "飛往陽光明媚的蔚藍海岸。", 
+                    highlights: "1. 降落時選靠窗位看天使灣。" 
+                },
+                { 
+                    time: "14:55", title: "抵達尼斯", type: "transport", 
+                    desc: "Check-in Airbnb。", intro: "搭電車進入市區。感受到南法的海風。", 
+                    highlights: "1. 抵達昂格魯大道旁的住宿。" 
+                },
+                { 
+                    time: "17:00", title: "舊城區散步：賽雷亞市集 & 城堡山夕陽", type: "sight", 
+                    desc: "看日落全景。", intro: "尼斯的靈魂所在。先逛熱鬧市集，再上山看海。", 
+                    highlights: "1. **城堡山**：俯瞰整個尼斯與天使灣的最完美角度。\n2. **日落時刻**：看海水顏色隨陽光變換。" 
+                },
+                { 
+                    time: "19:00", title: "Nice Old Town", type: "food", 
+                    desc: "吃海鮮拼盤。", intro: "尼斯舊城區充滿南法與義大利風情的美食。", 
+                    highlights: "1. **Le Café de Turin**：招牌生蠔拼盤，鮮甜可口。" 
+                },
+                { 
+                    time: "21:00", title: "Airbnb (Nice)", type: "hotel", 
+                    desc: "71 Prom. des Anglais, Nice", intro: "海景住宿。", 
+                    highlights: "1. 聽著地中海的浪聲入睡。" 
+                }
+            ]},
+            { day: "Day 8", date: "2/20 (五)", events: [
+                { 
+                    time: "08:27", title: "前往芒通 Menton", type: "transport", 
+                    desc: "搭火車 Nice -> Menton。", intro: "08:27 發車。沿著絕美海岸線前往檸檬之城。", 
+                    highlights: "1. 坐在火車右側全程看海。" 
+                },
+                { 
+                    time: "09:00", title: "Jardins Biovès & Mitron Bakery", type: "sight", 
+                    desc: "檸檬雕塑。", intro: "檸檬嘉年華主展區。欣賞用柑橘堆砌出的奇蹟。", 
+                    highlights: "1. **Mitron Bakery**：買在地麵包當早餐。\n2. **檸檬藝術**：拍照色彩極度鮮豔。" 
+                },
+                { 
+                    time: "10:00", title: "Escaliers (黃色階梯)", type: "sight", 
+                    desc: "黃色建築拍照。", intro: "IG 熱門景點。黃色牆面與階梯構築出童話般的風景。", 
+                    highlights: "1. 上午光線拍起來最美，不會背光。" 
+                },
+                { 
+                    time: "10:30", title: "Plage des Sablettes", type: "sight", 
+                    desc: "絕美海灘。", intro: "位於舊城區下方的海灘，水質清澈見底。", 
+                    highlights: "1. 沿海漫步，感受溫暖氣候。" 
+                },
+                { 
+                    time: "11:30", title: "Basilique Saint-Michel", type: "sight", 
+                    desc: "看 Nice View。", intro: "爬上舊城區的高點，俯視芒通港口。", 
+                    highlights: "1. 教堂前平台視野極佳。" 
+                },
+                { 
+                    time: "12:00", title: "手工藝市集", type: "sight", 
+                    desc: "逛手工藝品。", intro: "檸檬節期間特有的在地手工藝與農產展示區。", 
+                    highlights: "1. 買點檸檬皂或果醬當伴手禮。" 
+                },
+                { 
+                    time: "12:30", title: "芒通午餐", type: "food", 
+                    desc: "Chez Lina / Le 31。", intro: "在芒通享用美味午餐。Le 31 以海鮮出名。", 
+                    highlights: "1. 享受悠閒的法式午休。" 
+                },
+                { 
+                    time: "13:52", title: "前往昂蒂布 Antibes", type: "transport", 
+                    desc: "搭車前往古城。", intro: "前往畢卡索鍾愛的度假勝地。", 
+                    highlights: "1. 抵達後沿海岸走進古城牆。" 
+                },
+                { 
+                    time: "15:00", title: "老城區隨意逛逛", type: "sight", 
+                    desc: "巷弄探索。", intro: "昂蒂布舊城充滿藝廊與設計小店。", 
+                    highlights: "1. 尋找巷弄裡的驚喜小店。" 
+                },
+                { 
+                    time: "16:00", title: "畢卡索博物館", type: "sight", 
+                    desc: "海邊工作室。", intro: "位於海邊城堡內，收藏了畢卡索在昂蒂布創作的作品。", 
+                    highlights: "1. 畫室的海景視野絕對讓 Queenie 驚艷。" 
+                },
+                { 
+                    time: "17:00", title: "Port Vauban & 沙灘", type: "sight", 
+                    desc: "看遊艇與夕陽。", intro: "歐洲最大的遊艇港，停滿了億萬富翁的超級郵輪。", 
+                    highlights: "1. **Le Nomade**：必拍白色巨大人形雕像。\n2. 試試在 Plage de la Gravette 看落日。" 
+                },
+                { 
+                    time: "19:00", title: "Bistro Chez Jules", type: "food", 
+                    desc: "珮珮推薦！", intro: "道地法式小館。吃完再回尼斯時間剛好。", 
+                    highlights: "1. 氣氛溫馨，料理實力紮實。" 
+                },
+                { 
+                    time: "21:00", title: "Airbnb (Nice)", type: "hotel", 
+                    desc: "返回尼斯住宿。", intro: "20 分鐘車程即回到尼斯。", 
+                    highlights: "1. 晚安南法。" 
+                }
+            ]},
+            { day: "Day 9", date: "2/21 (六)", events: [
+                { 
+                    time: "09:30", title: "朝聖：瞳子哭哭長椅", type: "sight", 
+                    desc: "尋找藍色椅子區。", intro: "電影《離線找真愛》場景。尼斯的象徵藍色椅子。", 
+                    highlights: "1. 跟 Queenie 坐在椅子上向著大海發呆。" 
+                },
+                { 
+                    time: "11:00", title: "聖母大教堂", type: "sight", 
+                    desc: "全白哥德式教堂。", intro: "尼斯梅森大道上的華麗教堂。", 
+                    highlights: "1. 全白外觀在陽光下非常耀眼。" 
+                },
+                { 
+                    time: "12:00", title: "Nha Que 越南河粉", type: "food", 
+                    desc: "溫暖亞洲味。", intro: "尼斯非常有名的越南餐廳。湯頭清甜。", 
+                    highlights: "1. 補充澱粉準備下午的嘉年華。" 
+                },
+                { 
+                    time: "13:30", title: "嘉年華：花車遊行", type: "sight", 
+                    desc: "馬賽納廣場遊行。", intro: "世界三大嘉年華。創意與歡樂的巔峰。", 
+                    highlights: "1. **鮮花大戰**：看著舞者投擲鮮花，氣氛極嗨。" 
+                },
+                { 
+                    time: "16:30", title: "舊城區與古著探索", type: "sight", 
+                    desc: "FlashBack Second Hand。", intro: "走進電影裡的古著店挖寶。", 
+                    highlights: "1. **FlashBack**：挑選特別的法式飾品。\n2. 吃吃看 Chez Theresa 的鷹嘴豆餅。" 
+                },
+                { 
+                    time: "19:30", title: "嘉年華：燈光遊行", type: "sight", 
+                    desc: "夜間魔幻氛圍。", intro: "晚上遊行更酷炫，燈光秀加上震撼音樂。", 
+                    highlights: "1. 人潮眾多，小心財物與相機。" 
+                },
+                { 
+                    time: "22:00", title: "Waka Bar", type: "food", 
+                    desc: "海邊微醺。", intro: "人氣酒吧。手拿法棍跟紅酒，享受海邊生活。", 
+                    highlights: "1. 慶祝尼斯之旅的高潮。" 
+                },
+                { 
+                    time: "23:00", title: "Airbnb (Nice)", type: "hotel", 
+                    desc: "最後一晚尼斯。", intro: "整理行裝。", 
+                    highlights: "1. 回味嘉年華的瘋狂。" 
+                }
+            ]},
+            { day: "Day 10", date: "2/22 (日)", events: [
+                { 
+                    time: "10:00", title: "瑪格之家 Maison Margaux", type: "food", 
+                    desc: "吃早午餐，寫明信片。", intro: "在 Place Magenta 享受質感早晨。玩個小遊戲。", 
+                    highlights: "1. 互寫明信片給未來的對方，封存尼斯回憶。" 
+                },
+                { 
+                    time: "11:00", title: "賽納廣場 & 噴泉", type: "sight", 
+                    desc: "白天散步。", intro: "紅色牆面與阿波羅神像，這裡是尼斯的客廳。", 
+                    highlights: "1. 白天的廣場寧靜而優雅。" 
+                },
+                { 
+                    time: "12:00", title: "Di Più / La Favola", type: "food", 
+                    desc: "尼斯義大利料理。", intro: "大份量的美食，讓人感受到地中海的熱情。", 
+                    highlights: "1. 推薦海鮮義大利麵。" 
+                },
+                { 
+                    time: "13:30", title: "前往火車站 Nice-Ville", type: "transport", 
+                    desc: "回住宿拿行李去車站。", intro: "前往 Gare de Nice-Ville 車站。", 
+                    highlights: "1. 預留點時間避免地鐵塞車。" 
+                },
+                { 
+                    time: "14:58", title: "TGV Inoui 高鐵時光", type: "transport", 
+                    desc: "海岸線絕美美景。", intro: "搭乘 TGV 前往巴黎。六小時車程。", 
+                    highlights: "1. **黃金兩小時**：前兩小時海景壯觀，別睡著！" 
+                },
+                { 
+                    time: "20:42", title: "抵達巴黎 & Check-in", type: "transport", 
+                    desc: "直奔左岸飯店。", intro: "抵達 Gare de Lyon。終於到巴黎了！", 
+                    highlights: "1. 推薦叫 Uber，省去拉行李擠地鐵之苦。" 
+                },
+                { 
+                    time: "21:30", title: "La Crème de Paris", type: "food", 
+                    desc: "第一份 Nutella 可麗餅。", intro: "巴黎左岸的宵夜儀式。", 
+                    highlights: "1. 跟 Queenie 說：「我們到巴黎了。」" 
+                },
+                { 
+                    time: "22:30", title: "Hotel Cluny Square (Paris)", type: "hotel", 
+                    desc: "巴黎住宿。", intro: "入住拉丁區。環境優雅治安佳。", 
+                    highlights: "1. 打開地圖規劃明早路線。" 
+                }
+            ]},
+            { day: "Day 11", date: "2/23 (一)", events: [
+                { 
+                    time: "08:00", title: "La Crème de Paris", type: "food", 
+                    desc: "可麗餅早餐。", intro: "巴黎式早晨的甜蜜開端。", 
+                    highlights: "1. 買袋可頌在路邊吃也很有感。" 
+                },
+                { 
+                    time: "09:00", title: "聖母院 & 莎士比亞書店", type: "sight", 
+                    desc: "修復後的聖母院。", intro: "巴黎原點。歷史與文學的交會點。", 
+                    highlights: "1. **莎士比亞書店**：尋找那隻睡在舊書堆裡的貓。" 
+                },
+                { 
+                    time: "11:00", title: "巴黎古監獄", type: "sight", 
+                    desc: "瑪麗王后囚室。", intro: "充滿歷史厚重感。曾是瑪麗王后的最後一站。", 
+                    highlights: "1. 感受石磚牆內的肅穆氛圍。" 
+                },
+                { 
+                    time: "12:30", title: "聖禮拜堂", type: "sight", 
+                    desc: "絕美彩繪玻璃。", intro: "小居最強力推薦！巴黎最美的玻璃窗。", 
+                    highlights: "1. 陽光透過 13 世紀玻璃灑下的彩色神蹟。" 
+                },
+                { 
+                    time: "13:00", title: "聖母院登頂", type: "sight", 
+                    desc: "看滴水嘴獸。", note: "預約13:00", intro: "爬上塔樓，近距離看鐘樓怪人的怪獸朋友。", 
+                    highlights: "1. 怪獸與巴黎鐵塔同框的絕佳構圖。" 
+                },
+                { 
+                    time: "14:30", title: "午餐時間", type: "food", 
+                    desc: "Crêperie Genia / Isabelle。", intro: "拉丁區街頭美食。Isabelle 有巴黎第一名的可頌。", 
+                    highlights: "1. 隨性地坐在噴水池旁享用美食。" 
+                },
+                { 
+                    time: "15:30", title: "先賢祠 & Emily & 公園", type: "sight", 
+                    desc: "拉丁區漫步。", intro: "文化深度巡禮。探訪雨果、居禮夫人的安息地。", 
+                    highlights: "1. **盧森堡公園**：幫 Queenie 拍張坐在綠椅子上的氣質照。" 
+                },
+                { 
+                    time: "17:30", title: "艾菲爾鐵塔 (Metro 6)", type: "transport", 
+                    desc: "地鐵最美一幕。", intro: "搭乘地鐵 6 號線。最特別的交通體驗。", 
+                    highlights: "1. 經過 Passy 橋時看鐵塔驚現，那是巴黎最美一幕。" 
+                },
+                { 
+                    time: "18:00", title: "艾菲爾鐵塔", type: "sight", 
+                    desc: "戰神廣場看閃燈。", intro: "站在鋼鐵巨人下。感受到最浪漫的震撼。", 
+                    highlights: "1. 每到整點閃爍 5 分鐘，像鑲滿鑽石一樣。" 
+                },
+                { 
+                    time: "19:00", title: "塞納河遊船", type: "sight", 
+                    desc: "Bateaux Parisiens。", intro: "水上夜宴視角。看巴黎地標在夜晚點亮。", 
+                    highlights: "1. 穿過亞歷山大三世橋的華麗感。" 
+                },
+                { 
+                    time: "20:00", title: "深夜法餐", type: "food", 
+                    desc: "La Jacobine / Fernand。", intro: "溫馨經典的法式料理。晚餐一定要豐盛。", 
+                    highlights: "1. La Jacobine 的洋蔥湯不可錯過。" 
+                },
+                { 
+                    time: "22:00", title: "Hotel Cluny Square (Paris)", type: "hotel", 
+                    desc: "回飯店休息。", intro: "浪漫的一天圓滿結束。", 
+                    highlights: "1. 幫手機充飽電，明天要戰凡爾賽。" 
+                }
+            ]},
+            { day: "Day 12", date: "2/24 (二)", events: [
+                { 
+                    time: "08:00", title: "出發前往凡爾賽 Versailles", type: "transport", 
+                    desc: "飯店附近搭乘 RER C 線。請認明終點站列車。", note: "Navigo 週卡",
+                    intro: "搭乘 RER C 直達凡爾賽。這座城市因路易十四的宏偉宮殿而聞名於世。",
+                    highlights: "1. **小居指引**：請認明終點站為 Versailles Château Rive Gauche 的列車，這是最近車站。" 
+                },
+                { 
+                    time: "09:00", title: "凡爾賽宮：走進太陽王的珠寶盒", type: "sight", 
+                    desc: "參觀鏡廳與大居室，欣賞極致奢華。", note: "世界遺產",
+                    intro: "全歐洲最奢華的宮殿，展示了波旁王朝最強盛時期的權力與美學。",
+                    highlights: "1. **鏡廳**：這天亮點！早點進去避開團客，幫 Queenie 拍到反射華麗陽光的空靈照。" 
+                },
+                { 
+                    time: "12:00", title: "花園午餐：在皇宮裡喝熱巧克力", type: "food", 
+                    desc: "推薦 Angelina Versailles，品嚐招牌熱巧克力。", note: "推薦",
+                    intro: "在廣闊凡爾賽花園內尋找甜蜜。Angelina 就在宮殿內。",
+                    highlights: "1. 招牌熱巧克力 (L'Africain) 更有皇家氛圍。" 
+                },
+                { 
+                    time: "13:30", title: "瑪麗安東尼的祕密花園：特里亞農宮 & 莊園", type: "sight", 
+                    desc: "尋訪 Queen's Hamlet，體驗法式田園浪漫。", note: "最推薦",
+                    intro: "這裡是瑪麗·安東尼皇后逃避宮廷繁瑣禮儀的避風港。仿造農村建的童話建築。",
+                    highlights: "1. 有磨坊、小橋、流水。非常清幽，幫 Queenie 拍出田園電影感照片。" 
+                },
+                { 
+                    time: "15:30", title: "返回巴黎市區", type: "transport", 
+                    desc: "搭乘 RER C 回市區，準備看夜景。", note: "交通",
+                    intro: "結束宮廷之旅。在車上休息，為晚上的凱旋門行程充電。",
+                    highlights: "1. 路線：RER C 轉地鐵 9 到 Trocadéro 轉 6 號線。" 
+                },
+                { 
+                    time: "16:30", title: "凱旋門 Arc de Triomphe 夕陽與夜景", type: "sight", 
+                    desc: "使用 Museum Pass 登頂，俯瞰 12 條放射大道。", note: "絕佳視角",
+                    intro: "拿破崙為紀念奧斯特利茨戰役而建。建議日落前 30 分鐘登頂。",
+                    highlights: "1. 一次收集白天市景、黃昏彩霞與入夜燈火。\n2. **鐵塔視角**：這裡拍鐵塔角度非常正，每整點閃燈效果極佳。" 
+                },
+                { 
+                    time: "19:00", title: "巴黎美食三選一：Pedra Alta / Chez Savy / Entrecôte", type: "food", 
+                    desc: "香榭大道附近的豐盛晚餐選擇。", note: "晚餐",
+                    intro: "看完夜景後，在凱旋門與香榭大道周邊挑選一家名店。",
+                    highlights: "1. **Pedra Alta**：平價大份量海鮮拼盤。\n2. **Le Relais de l'Entrecôte**：傳說中「祕製醬汁牛排」，全店只賣這一道菜。" 
+                },
+                {
+                    time: "21:30", title: "Hotel Cluny Square (Paris)", type: "hotel",
+                    desc: "返回飯店休息。", note: "住宿",
+                    intro: "凡爾賽宮走路較多，今晚好好休息。",
+                    highlights: "1. 抬腿放鬆。"
+                }
+            ]},
+            { day: "Day 13", date: "2/25 (三)", events: [
+                { 
+                    time: "08:00", title: "法國造幣廠 & 藝術橋", type: "sight", 
+                    desc: "Emily In Paris 巡禮 & BO&MIE 早餐。", note: "朝賞",
+                    intro: "早晨漫步於 Emily 的生活足跡。藝術橋曾是著名的鎖橋。",
+                    highlights: "1. **Emily 場景**：打卡造幣廠。\n2. **早餐**：到 BO&MIE Louvre-Rivoli 買可頌，看著金字塔醒來。" 
+                },
+                { 
+                    time: "09:00", title: "晨間散步：巴黎皇家宮殿", type: "sight", 
+                    desc: "搭乘地鐵 1 號線前往 Palais Royal。", note: "網美景點",
+                    intro: "這是巴黎最優雅的皇家後花園。擁有時尚界最愛的黑白石柱裝置藝術。",
+                    highlights: "1. **黑白石柱**：在柱子之間拍時尚大片。\n2. 尋找 Emily 劇中的長椅。" 
+                },
+                { 
+                    time: "10:00", title: "羅浮宮金字塔拍照", type: "sight", 
+                    desc: "先在外面金字塔廣場拍照留念。", note: "打卡",
+                    intro: "玻璃金字塔是巴黎地標，白天的採光與對稱美感極佳。",
+                    highlights: "1. 拍「指尖觸摸金字塔」的經典照。" 
+                },
+                { 
+                    time: "10:30", title: "杜樂麗花園漫步", type: "sight", 
+                    desc: "拉兩張綠色金屬椅，享受最舒心的畫面。", note: "法式生活",
+                    intro: "連接羅浮宮與協和廣場的皇家花園，2 月陽光特別溫柔。",
+                    highlights: "1. 坐在池邊看遠方鐵塔和方尖碑。" 
+                },
+                { 
+                    time: "11:30", title: "協和廣場 Place de la Concorde", type: "sight", 
+                    desc: "欣賞埃及方尖碑與華麗噴泉。", note: "歷史點",
+                    intro: "巴黎最大廣場，中央矗立著來自埃及盧克索神廟的方尖碑。",
+                    highlights: "1. 欣賞兩座精美噴泉。" 
+                },
+                { 
+                    time: "12:00", title: "橘園美術館 Musée de l'Orangerie", type: "sight", 
+                    desc: "看莫內《大睡蓮》，巴黎最寧靜時刻。", note: "印象派",
+                    intro: "專為莫內巨幅連作而設計。純白展廳與自然採光交織。",
+                    highlights: "1. **環繞式體驗**：被 360 度的睡蓮包圍，感受寧靜心靈。" 
+                },
+                { 
+                    time: "14:00", title: "海軍府 Hôtel de la Marine", type: "sight", 
+                    desc: "2021 開放！隱藏版豪宅。", note: "強力推薦",
+                    intro: "極致華麗的法式裝飾藝術。體驗感比凡爾賽宮更好。",
+                    highlights: "1. **奢華內裝**：欣賞 18 世紀工藝。人潮較少。" 
+                },
+                { 
+                    time: "16:00", title: "羅浮宮深度藝術攻略", type: "sight", 
+                    desc: "週三開到 21:00，避開人潮秘訣。", note: "博物館之王",
+                    intro: "使用小居秘訣避開入口。週三晚間夜遊體驗最棒。",
+                    highlights: "1. **三寶路線**：蒙娜麗莎 -> 勝利女神 -> 維納斯。\n2. **拿破崙三世套房**：奢華程度不輸凡爾賽。" 
+                },
+                { 
+                    time: "21:00", title: "Le Comptoir de La Gastronomie", type: "food", 
+                    desc: "近藤梅根推薦，道地鵝肝與油封鴨。", note: "晚餐",
+                    intro: "食材名店附設餐廳。以高品質鵝肝與油封鴨聞名。",
+                    highlights: "1. 分量十足，道地精緻。" 
+                },
+                {
+                    time: "22:30", title: "Hotel Cluny Square (Paris)", type: "hotel",
+                    desc: "返回飯店休息。", note: "住宿",
+                    intro: "充實藝術之日結束。",
+                    highlights: "今晚夢裡都是名畫。"
+                }
+            ]},
+            { day: "Day 14", date: "2/26 (四)", events: [
+                { 
+                    time: "08:00", title: "浪漫制高點：蒙馬特 Montmartre", type: "sight", 
+                    desc: "愛牆、聖心堂、小丘廣場。", note: "朝聖",
+                    intro: "巴黎最具藝術氣息的山丘，俯瞰整座城市的最佳地點。",
+                    highlights: "1. **愛牆**：找找繁體中文「我愛你」並合影。\n2. **聖心堂**：眺望巴黎全景。\n3. **Emily 巡禮**：打卡 La Maison Rose (粉紅房子)。" 
+                },
+                { 
+                    time: "11:30", title: "午餐：Carré Pain de Mie", type: "food", 
+                    desc: "招牌炸蝦三明治與法式吐司。", note: "美味",
+                    intro: "日系精緻麵包店。炸蝦三明治必點。",
+                    highlights: "1. 炸蝦三明治外脆內嫩，超級紮實。" 
+                },
+                { 
+                    time: "12:00", title: "時尚與美食：瑪黑區 Le Marais", type: "sight", 
+                    desc: "口袋餅與古著挖寶。", note: "潮流",
+                    intro: "巴黎最具活力的區塊。充滿歷史感與設計小店。",
+                    highlights: "1. **L'As du Fallafel**：必吃中東口袋餅經典。\n2. **古著店**：Queenie 的挖寶天堂。" 
+                },
+                { 
+                    time: "16:30", title: "奧賽美術館 Musée d'Orsay", type: "sight", 
+                    desc: "深夜奧賽攻略 (週四開到 21:45)。", note: "質感之夜",
+                    intro: "火車站改建的美術館。週四晚間人潮最散。",
+                    highlights: "1. **必拍大鐘**：站在五樓大鐘後方拍剪影照。\n2. **梵谷星夜**：親睹筆觸震撼力。" 
+                },
+                { 
+                    time: "21:00", title: "晚餐：Les Antiquaires", type: "food", 
+                    desc: "深夜法式小館。必點油封鴨。", note: "晚餐",
+                    intro: "奧賽旁邊，深受在地人喜愛的經典小館。營業到凌晨。",
+                    highlights: "1. 油封鴨腿 (Confit de Canard) 皮脆肉嫩。" 
+                },
+                {
+                    time: "22:30", title: "Hotel Cluny Square (Paris)", type: "hotel",
+                    desc: "返回飯店休息。", note: "住宿",
+                    intro: "倒數第二晚巴黎。",
+                    highlights: "整理瑪黑區戰利品。"
+                }
+            ]},
+            { day: "Day 15", date: "2/27 (五)", events: [
+                { 
+                    time: "09:00", title: "鐵塔最佳觀景台：夏樂宮 Trocadéro", type: "sight", 
+                    desc: "最開闊鐵塔視角。", note: "打卡",
+                    intro: "拍鐵塔全身最壯觀、無遮蔽地點。早晨順光最美。",
+                    highlights: "1. 幫 Queenie 拍張坐在階梯上的大片。" 
+                },
+                { 
+                    time: "10:30", title: "電影感定格：比爾阿克姆橋", type: "sight", 
+                    desc: "電影《全面啟動》拍攝地。", note: "工業浪漫",
+                    intro: "鋼鐵長廊與鐵塔框景。體驗獨特的工業浪漫氛圍。",
+                    highlights: "1. 利用柱子透視法拍出層次感。" 
+                },
+                { 
+                    time: "12:00", title: "凱旋門 & 香榭大道 & 早午餐", type: "food", 
+                    desc: "漫步最美大道。", note: "Brunch",
+                    intro: "看白天的凱旋門矗立街頭。推薦 Terre d’Azur 早午餐。",
+                    highlights: "1. 感受香榭大道的時尚氣息。" 
+                },
+                { 
+                    time: "14:30", title: "金碧輝煌：巴黎歌劇院 Palais Garnier", type: "sight", 
+                    desc: "《歌劇魅影》靈感來源，極致奢華。", note: "必看內部",
+                    intro: "大理石階梯、金色長廊。奢華程度會讓 Queenie 驚嘆。",
+                    highlights: "1. **和平咖啡館**：就在對面。享受頂級甜點。\n2. **PH 馬卡龍**：吃顆鹹奶油馬卡龍。" 
+                },
+                { 
+                    time: "16:00", title: "購物衝刺：拉法葉 & 春天百貨", type: "sight", 
+                    desc: "最後的採買：精品、化妝品。", note: "Shopping",
+                    intro: "老佛爺百貨彩色穹頂與 360 度頂樓露台是必看。",
+                    highlights: "1. **退稅攻略**：記得帶護照，一次辦好最省事。" 
+                },
+                { 
+                    time: "20:00", title: "最後的晚餐：再見巴黎 Les Cocottes", type: "food", 
+                    desc: "名廚 Christian Constant 的精緻料理。", note: "離別時刻",
+                    intro: "離鐵塔不遠的優雅小餐館。料理裝在鑄鐵鍋內極精緻。",
+                    highlights: "1. 散步到塞納河邊，看最後一次閃爍鐵塔道別。" 
+                },
+                {
+                    time: "22:00", title: "Hotel Cluny Square (Paris)", type: "hotel",
+                    desc: "返回飯店整理行李。", note: "住宿",
+                    intro: "旅程最後一晚。整理這 16 天滿滿的回憶。",
+                    highlights: "1. 行李秤重。準備明早退稅。"
+                }
+            ]},
+            { day: "Day 16", date: "2/28 (六)", events: [
+                { 
+                    time: "07:30", title: "Check-out & 前往機場 (CDG)", type: "transport", 
+                    desc: "前往 Terminal 1。", note: "移動日",
+                    intro: "旅程最後一段路。帶著回憶出發。",
+                    highlights: "1. **交通推薦**：叫 Uber/G7 最省力安全。\n2. **最後一袋法味**：買袋法式點心上飛機。" 
+                },
+                { 
+                    time: "08:30", title: "機場必辦：退稅與報到", type: "transport", 
+                    desc: "PABLO 機器掃描與國泰航空 Check-in。", note: "CDG T1",
+                    intro: "先找 PABLO 退稅機對準條碼掃描。顯綠燈代表成功。",
+                    highlights: "1. 托運行李要確保不超重。" 
+                },
+                { 
+                    time: "10:00", title: "最後的機場時光：ICARE LOUNGE", type: "food", 
+                    desc: "享受歐洲最後歇腳處。", note: "放鬆",
+                    intro: "通過安檢後前往 Lounge。整理 16 天拍的幾千張美照。",
+                    highlights: "1. 喝杯果汁，跟這趟夢幻旅程做心靈總結。" 
+                },
+                { 
+                    time: "11:40", title: "🛫 啟程返家 CDG - HKG - TPE", type: "transport", 
+                    desc: "國泰航空，平安歸國。", note: "平安回家",
+                    intro: "帶著戰利品回到溫暖的家。期待下一次冒險！",
+                    highlights: "1. 機上調整時差休息。" 
+                },
+                {
+                    time: "End", title: "甜蜜的家", type: "hotel",
+                    desc: "平安抵達台灣。", note: "Home",
+                    intro: "16 天英法浪漫之旅圓滿結束。",
+                    highlights: "1. 回家好好休息。"
+                }
+            ]}
+        ];
+
+        const swipeContainer = document.getElementById('swipe-container');
+        const dayNav = document.getElementById('day-nav');
+
+        // Render Function
+        function renderItinerary() {
+            itineraryData.forEach((day, index) => {
+                const slideIndex = index + 1; // 0 is Cover
+
+                // 1. Create Nav Item
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item';
+                navItem.innerText = day.day;
+                navItem.onclick = () => scrollToSlide(slideIndex);
+                dayNav.appendChild(navItem);
+
+                // 2. Create Slide
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.id = `slide-${slideIndex}`;
+
+                // 3. Build Events HTML
+                let eventsHtml = '';
+                day.events.forEach(event => {
+                    let tagClass = 'sight';
+                    if (event.type === 'transport') tagClass = 'transport';
+                    if (event.type === 'food') tagClass = 'food';
+                    if (event.type === 'hotel') tagClass = 'hotel';
+
+                    // Generate Google Maps URL
+                    const mapQuery = encodeURIComponent(event.title);
+                    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+                    
+                    // Build detailed content section
+                    let detailContent = `
+                        <div class="detail-section">
+                            <span class="detail-title">📍 簡介</span>
+                            <div class="detail-content">${event.intro || '暫無簡介'}</div>
+                        </div>
+                        <div class="detail-section">
+                            <span class="detail-title">✨ 觀賞重點</span>
+                            <div class="detail-content">${(event.highlights || '暫無重點').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `;
+
+                    eventsHtml += `
+                        <div class="event-card" onclick="this.classList.toggle('expanded')">
+                            <!-- Google Maps Button -->
+                            <a href="${mapUrl}" class="map-btn" target="_blank" onclick="event.stopPropagation()">
+                                📍
+                            </a>
+                            
+                            <div class="timeline-dot"></div>
+                            <span class="time">${event.time}</span>
+                            <h3 class="title">${event.title}</h3>
+                            <div class="tag-container">
+                                ${event.note ? `<span class="tag" style="background:#f0f0f0;">${event.note}</span>` : ''}
+                                <span class="tag ${tagClass}">${event.type.toUpperCase()}</span>
+                            </div>
+                            <div class="desc">${event.desc}</div>
+                            <div class="full-desc">
+                                ${detailContent}
+                            </div>
+                            <div class="click-hint">▼ 點擊展開詳情</div>
+                        </div>
+                    `;
+                });
+
+                slide.innerHTML = `
+                    <div class="day-content">
+                        <div class="day-header-large">
+                            <div class="day-number">${day.day}</div>
+                            <div class="day-date-large">${day.date}</div>
+                        </div>
+                        <div class="slide-timeline">
+                            ${eventsHtml}
+                        </div>
+                    </div>
+                `;
+
+                swipeContainer.appendChild(slide);
+            });
+        }
+
+        // Scroll Control Functions
+        function scrollToSlide(index) {
+            const width = swipeContainer.clientWidth;
+            swipeContainer.scrollTo({
+                left: width * index,
+                behavior: 'smooth'
+            });
+        }
+
+        // Active Nav Detection
+        function updateActiveNav() {
+            const width = swipeContainer.clientWidth;
+            let currentIndex = Math.round(swipeContainer.scrollLeft / width);
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, idx) => {
+                if (idx === currentIndex) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize
+        renderItinerary();
+        
+        swipeContainer.addEventListener('scroll', () => {
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(updateActiveNav, 50);
+        });
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 1500);
+        };
+    </script>
+</body>
+</html>
